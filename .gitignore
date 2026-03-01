@@ -1,0 +1,13 @@
+# Databricks sync metadata
+.databricks/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.env
+.venv/
+venv/
+
+# macOS
+.DS_Store
