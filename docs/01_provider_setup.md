@@ -2,13 +2,13 @@
 
 ## Overview
 
-The provider workspace (`e2-demo-west`) hosts the source data and configures Delta Sharing to make it available to the recipient workspace.
+The **Provider Workspace** hosts the source data and configures Delta Sharing to make it available to the Recipient Workspace. All steps in this guide are run on the Provider Workspace.
 
 ## Prerequisites
 
-- Admin or data owner access on `e2-demo-west`
+- Admin or data owner access on the Provider Workspace
 - Unity Catalog enabled
-- Tables exist in `energy_utilities` catalog
+- Tables exist in the `energy_utilities` catalog
 
 ## Steps
 
@@ -27,7 +27,7 @@ ALTER TABLE energy_utilities.energy_trading.positions
 SET TBLPROPERTIES (delta.enableChangeDataFeed = true);
 ```
 
-**Note:** CDF is not enabled on `iso_market` and `turbine_locations` as these are reference/static tables.
+**Note:** CDF is not enabled on `iso_market` and `turbine_locations` as these are reference/static tables that change infrequently and can be fully reloaded.
 
 ### 2. Create the Share
 
@@ -37,7 +37,7 @@ CREATE SHARE IF NOT EXISTS energy_market_share;
 
 ### 3. Add Tables to Share
 
-Tables are added with aliases and optionally with history sharing:
+Tables are added with schema aliases and optionally with history sharing enabled:
 
 ```sql
 ALTER SHARE energy_market_share ADD TABLE energy_utilities.energy_trading.market_prices_pjm
@@ -56,21 +56,22 @@ ALTER SHARE energy_market_share ADD TABLE energy_utilities.power_generation.turb
   AS power_generation.turbine_locations;
 ```
 
-`WITH HISTORY` enables the recipient to read CDF and time-travel queries.
+`WITH HISTORY` enables the Recipient Workspace to read CDF and use time-travel queries against shared tables.
 
 ### 4. Create D2D Recipient
 
-Get the sharing identifier from the recipient workspace (Settings > General > Sharing Identifier):
+Get the sharing identifier from the Recipient Workspace:
+**Settings → Workspace Settings → General → Sharing Identifier**
 
 ```sql
-CREATE RECIPIENT IF NOT EXISTS fevm_energy_copilot
+CREATE RECIPIENT IF NOT EXISTS energy_copilot_recipient
 USING ID '<recipient-sharing-identifier>';
 ```
 
 ### 5. Grant Access
 
 ```sql
-GRANT SELECT ON SHARE energy_market_share TO RECIPIENT fevm_energy_copilot;
+GRANT SELECT ON SHARE energy_market_share TO RECIPIENT energy_copilot_recipient;
 ```
 
 ### 6. Verify
@@ -88,4 +89,4 @@ SHOW GRANTS ON SHARE energy_market_share;
 | "Share already exists" | Use `DROP SHARE IF EXISTS` first, or skip creation |
 | "Recipient already exists" | Safe to skip — recipient creation is idempotent |
 | CDF not available | Ensure table is Delta format and has been written to after CDF enablement |
-| "Cannot add table with history" | Table must have CDF enabled first |
+| "Cannot add table with history" | Table must have CDF enabled before adding `WITH HISTORY` |

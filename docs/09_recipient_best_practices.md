@@ -143,7 +143,7 @@ FROM delta_sharing_demo.control.control_cdf_checkpoint;
 
 ### Share Access Revoked
 
-1. Verify: `SHOW SHARES IN PROVIDER e2_demo_west_provider`
+1. Verify: `SHOW SHARES IN PROVIDER energy_market_provider`
 2. Fall back to bronze tables (last good copy)
 3. Contact provider to restore access
 4. Run `03_bronze_ingestion` with `force_full_reload=true`

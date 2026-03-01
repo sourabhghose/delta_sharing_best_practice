@@ -2,14 +2,14 @@
 
 ## Demo Scenario
 
-A **market operator** (e2-demo-west) shares energy trading and generation data with an **energy retailer** (fevm-energy-copilot) using Databricks Delta Sharing. The retailer builds a full medallion architecture on top of the shared data.
+A **market operator** (Provider Workspace) shares energy trading and generation data with an **energy retailer** (Recipient Workspace) using Databricks Delta Sharing. The retailer builds a full medallion architecture on top of the shared data.
 
 ## Data Flow
 
 ```
 ┌──────────────────────────────────┐
-│         e2-demo-west             │
-│         (Provider)               │
+│       Provider Workspace         │
+│       (Market Operator)          │
 │                                  │
 │   energy_utilities catalog       │
 │   ├─ energy_trading              │
@@ -21,7 +21,7 @@ A **market operator** (e2-demo-west) shares energy trading and generation data w
 │      └─ turbine_locations        │
 │                                  │
 │   Share: energy_market_share     │
-│   Recipient: fevm_energy_copilot │
+│   Recipient: energy_copilot_recipient │
 └──────────────┬───────────────────┘
                │
                │  Delta Sharing (D2D)
@@ -29,10 +29,10 @@ A **market operator** (e2-demo-west) shares energy trading and generation data w
                │
                ▼
 ┌──────────────────────────────────┐
-│      fevm-energy-copilot         │
-│      (Recipient)                 │
+│      Recipient Workspace         │
+│      (Energy Retailer)           │
 │                                  │
-│   Provider: e2_demo_west_provider│
+│   Provider: energy_market_provider│
 │   Foreign catalog:               │
 │     shared_energy_market         │
 │                                  │
@@ -52,8 +52,8 @@ Delta Sharing D2D uses Databricks-managed networking. No VPC peering or private 
 Requirements:
 - Both workspaces must be on Unity Catalog
 - Provider creates a share and adds tables
-- Provider creates a D2D recipient using the recipient workspace's sharing identifier
-- Recipient creates a provider and a foreign catalog from the share
+- Provider creates a D2D recipient using the Recipient Workspace's sharing identifier
+- Recipient creates a provider object and a foreign catalog from the share
 
 ## Key Design Decisions
 
@@ -68,11 +68,11 @@ Requirements:
 
 ## Catalogs and Schemas
 
-### Provider (e2-demo-west)
+### Provider Workspace
 - `energy_utilities.energy_trading` — market prices, trading summaries, positions
 - `energy_utilities.power_generation` — ISO market data, turbine locations
 
-### Recipient (fevm-energy-copilot)
+### Recipient Workspace
 - `shared_energy_market` — foreign catalog (read-only view of shared data)
 - `delta_sharing_demo.bronze` — raw ingested data with metadata
 - `delta_sharing_demo.silver` — bitemporal curated data
