@@ -42,22 +42,22 @@ Demonstrates **Databricks Delta Sharing** across two workspaces using energy mar
 | # | Notebook | Run On | Description |
 |---|----------|--------|-------------|
 | 00 | `demo_overview` | Either | Architecture diagram, connectivity check, demo scenario |
-| 01 | `provider_setup` | **e2-demo-west** | Enable CDF, create share, add tables, create recipient |
-| 02 | `recipient_catalog_setup` | **fevm-energy-copilot** | Create provider, shared catalog, demo catalog + schemas |
-| 03 | `bronze_ingestion` | **fevm-energy-copilot** | Append-only bronze layer with ingestion metadata |
-| 04 | `silver_bitemporal` | **fevm-energy-copilot** | SCD2 bitemporal MERGE with valid/transaction time |
-| 05 | `gold_aggregations` | **fevm-energy-copilot** | Daily summaries, KPIs, generation mix |
-| 06 | `data_quality_monitoring` | **fevm-energy-copilot** | DQ checks, schema drift, freshness SLAs |
-| 07 | `audit_history` | **fevm-energy-copilot** | Permanent CDF archive, reconciliation, compliance |
-| 08 | `scheduling_and_orchestration` | **fevm-energy-copilot** | Jobs, Workflows, streaming, DLT, open sharing |
-| 09 | `recipient_best_practices` | **fevm-energy-copilot** | Access control, performance, governance, runbook |
+| 01 | `provider_setup` | **Provider Workspace** | Enable CDF, create share, add tables, create recipient |
+| 02 | `recipient_catalog_setup` | **Recipient Workspace** | Create provider, shared catalog, demo catalog + schemas |
+| 03 | `bronze_ingestion` | **Recipient Workspace** | Append-only bronze layer with ingestion metadata |
+| 04 | `silver_bitemporal` | **Recipient Workspace** | SCD2 bitemporal MERGE with valid/transaction time |
+| 05 | `gold_aggregations` | **Recipient Workspace** | Daily summaries, KPIs, generation mix |
+| 06 | `data_quality_monitoring` | **Recipient Workspace** | DQ checks, schema drift, freshness SLAs |
+| 07 | `audit_history` | **Recipient Workspace** | Permanent CDF archive, reconciliation, compliance |
+| 08 | `scheduling_and_orchestration` | **Recipient Workspace** | Jobs, Workflows, streaming, DLT, open sharing |
+| 09 | `recipient_best_practices` | **Recipient Workspace** | Access control, performance, governance, runbook |
 
 ## How to Run
 
-1. **Upload** `01_provider_setup.py` to the `e2-demo-west` workspace
-2. **Upload** all other notebooks (`00`, `02`–`07`) to the `fevm-energy-copilot` workspace
-3. **Run `01`** on e2-demo-west to set up sharing infrastructure
-4. **Run `02`–`07` sequentially** on fevm-energy-copilot to build the medallion pipeline
+1. **Upload** `01_provider_setup.py` to the **Provider Workspace**
+2. **Upload** all other notebooks (`00`, `02`–`09`) to the **Recipient Workspace**
+3. **Run `01`** on the Provider Workspace to set up sharing infrastructure
+4. **Run `02`–`07` sequentially** on the Recipient Workspace to build the medallion pipeline
 5. **Verify** shared catalog has tables, bronze/silver/gold/audit tables are populated
 6. **(Optional)** Review `08_scheduling_and_orchestration` for Jobs, streaming, and DLT patterns
 7. **(Optional)** Review `09_recipient_best_practices` for access control, governance, and operational guidance
